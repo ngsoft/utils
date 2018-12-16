@@ -19,3 +19,4 @@ alias apti='sudo aptitude'
 alias open='xdg-open > /dev/null 2>&1'
 alias sopen='sudo xdg-open > /dev/null 2>&1'
 
+
