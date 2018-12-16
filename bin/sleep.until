@@ -3,13 +3,12 @@ rtcn=rtc0
 lockfile=/tmp/$(basename $0)
 
 now=$(date '+%s' -d 'now')
-match_hour="^([0-9]{1,2})$"
 match_timestamp="^([0-9]+)$"
 
 usage()
 {
 	printf "Usage: $0 <hour[0~23]>\n"
-	exit 1
+	return 1
 }
 
 setclock()
@@ -46,7 +45,7 @@ get_string()
 {
 	current=$(date '+%H')
 	day=tomorrow
-	if [[ $1 < $current ]]; then
+	if [[ $current -lt $1 ]]; then
 		day=today
 	fi
 	hour=$1
@@ -79,12 +78,13 @@ runclock()
 end()
 {
 	sleep 1
+	resetclock
 	rm $lockfile
 	exit $1
 }
 
 if [[ -e $lockfile ]]; then
-	printf "$(basename $0) already running, aborting..."
+	printf "$(basename $0) already running, aborting...\n"
 	exit 1
 fi
 touch $lockfile
@@ -96,14 +96,17 @@ if [[ -z $1 ]]; then
 	end $?
 fi
 
-if [[ $1 =~ $match_hour ]]; then
-	if [[ $1 > 23 || $1 < 0 ]]; then
-		printf "Invalid hour $hour supplied.\n"
+if [[ $1 =~ $match_timestamp ]]; then
+	if [[ $1 -gt 23 || $1 -lt 0 ]]; then
+		printf "Invalid hour $1 supplied.\n"
 		usage
+		rm $lockfile
+		exit 1
 	fi
 	runclock $1
 	end $?
 fi
 usage
-
+rm $lockfile
+exit 1
 
