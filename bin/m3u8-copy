@@ -1,0 +1,19 @@
+#!/bin/bash
+usage()
+{
+	printf "Usage m3u8-copy <input.m3u8> <output.mp4>\n"
+	exit 0
+}
+if [ -z "$1" ];then usage
+fi
+if [ -z "$2" ];then usage
+fi
+args='-hide_banner -loglevel info -protocol_whitelist "file,http,https,tcp,tls" -y'
+prefix=/opt
+cfg=/etc/m3u8.cfg
+
+[ -r $prefix$cfg ] && . $prefix$cfg
+
+ffmpeg $args -i "$1" -c copy "$2"
+
+

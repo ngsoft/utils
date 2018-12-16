@@ -1,0 +1,19 @@
+##
+# Basic SSH & Shell aliases
+# For Ubuntu
+##
+export PATH=$PATH:/opt/bin
+export DISPLAY=:0
+#export PYTHONHTTPSVERIFY=0
+alias apt='sudo apt-get'
+alias service='sudo service'
+alias reboot='sudo shutdown -r now'
+alias halt='sudo shutdown -h now'
+alias snano='sudo nano'
+alias scat='sudo cat'
+alias takeown="sudo chown -R $USER:$USER"
+alias dirsize='du -hsc'
+alias gdebi='sudo gdebi'
+alias snap='sudo snap'
+alias apti='sudo aptitude'
+alias open='xdg-open > /dev/null 2>&1'

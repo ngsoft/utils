@@ -1,0 +1,48 @@
+#!/bin/bash
+
+check_status()
+{
+	status=$(xset q)
+	enabled=0
+	screen=1
+	printf "$status" | grep "DPMS is Enabled" > /dev/null
+	if [[ $? == 0 ]]; then
+		enabled=1
+	fi
+	#Monitor is On if $enabled == 0
+	if [[ $enabled == 1 ]]; then
+		printf "$status" | grep "Monitor is in Suspend" > /dev/null
+		if [[ $? == 0 ]]; then
+			screen=0
+		fi
+		printf "$status" | grep "Monitor is in Standby" > /dev/null
+		if [[ $? == 0 ]]; then
+			screen=0
+		fi
+		printf "$status" | grep "Monitor is Off" > /dev/null
+		if [[ $? == 0 ]]; then
+			screen=0
+		fi
+	fi
+	if [[ $screen == 0 ]]; then
+		printf 0
+	else
+		printf 1
+	fi
+}
+set_on()
+{
+	xset -dpms
+	xset +dpms
+}
+set_off()
+{
+	xset dpms force suspend
+}
+
+if [[ $(check_status) == 1 ]]; then
+	set_off
+else
+	set_on
+fi
+

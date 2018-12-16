@@ -1,0 +1,9 @@
+#!/bin/bash
+
+checkdomain="http://whatismyip.akamai.com/"
+ip=$(curl -s $checkdomain $@)
+if [ "$?" != "0" ]; then
+	exit 1
+fi
+echo $ip
+exit 0

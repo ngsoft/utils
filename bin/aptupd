@@ -1,0 +1,35 @@
+#!/usr/bin/sudo /bin/bash
+
+for arg in $@; do
+	if [ "$arg" == "-v" ]; then
+		verbose=1
+	fi
+done
+
+do_cmd() {
+	if [[ -n $verbose ]]; then
+		$@
+		return $?
+	else
+		$@ >/dev/null 2>&1
+		return $?
+	fi
+}
+
+echo "Updating package list ..."
+do_cmd apt-get update
+echo "Removing unneeded packages ..."
+do_cmd apt-get -y autoremove --purge
+echo "Upgrade ..."
+do_cmd apt-get -y -f upgrade
+echo "Distribution upgrade ..."
+do_cmd apt-get -y -f dist-upgrade
+echo "Removing unneeded packages ..."
+do_cmd apt-get -y autoremove --purge
+echo "Cleaning deprecated packages ..."
+do_cmd apt-get -y autoclean
+echo "Cleaning cache ..."
+do_cmd apt-get -y clean
+echo "Checking changes ..."
+do_cmd apt-get update
+echo "All done, please reboot."
