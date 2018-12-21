@@ -1,48 +1,40 @@
 #!/bin/bash
 
-check_status()
-{
-	status=$(xset q)
-	enabled=0
-	screen=1
-	printf "$status" | grep "DPMS is Enabled" > /dev/null
-	if [[ $? == 0 ]]; then
-		enabled=1
-	fi
-	#Monitor is On if $enabled == 0
-	if [[ $enabled == 1 ]]; then
-		printf "$status" | grep "Monitor is in Suspend" > /dev/null
+#
+# Check screen status
+# Errorlevel 1 Screen is on
+# errorlevel 0 screen is off
+#
+check_status(){
+	local status=$(xset q)
+	local screen=1
+	if printf "$status" | grep "DPMS is Enabled" > /dev/null 2>&1; then
+		printf "$status" | grep "Monitor is in Suspend" > /dev/null 2>&1
 		if [[ $? == 0 ]]; then
 			screen=0
 		fi
-		printf "$status" | grep "Monitor is in Standby" > /dev/null
+		printf "$status" | grep "Monitor is in Standby" > /dev/null 2>&1
 		if [[ $? == 0 ]]; then
 			screen=0
 		fi
-		printf "$status" | grep "Monitor is Off" > /dev/null
+		printf "$status" | grep "Monitor is Off" > /dev/null 2>&1
 		if [[ $? == 0 ]]; then
 			screen=0
 		fi
 	fi
-	if [[ $screen == 0 ]]; then
-		printf 0
-	else
-		printf 1
-	fi
+	return $screen
 }
-set_on()
-{
+set_on(){
 	xset -dpms
 	xset +dpms
 }
-set_off()
-{
+set_off(){
 	xset dpms force suspend
 }
 
-if [[ $(check_status) == 1 ]]; then
-	set_off
-else
+if check_status; then
 	set_on
+else
+	set_off
 fi
 
